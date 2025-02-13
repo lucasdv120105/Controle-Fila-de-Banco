@@ -113,6 +113,45 @@ void imprimirLista(tipoLista *lista)
   }
 }
 
+bool caixas[5] = {false, false, false, false, false};
+int prioridadesAtendidas = 0, naoPrioritariosAtendidos = 0;
+
+void chamaCliente(tipoLista *lista, bool caixas[], int numCaixas)
+{
+  if(lista->inicio == NULL){
+    printf("Fila vazia.\n");
+    return;
+  }
+
+  No *atual = lista->inicio;
+  
+  while (atual != NULL)
+  {
+    for(int i = 0; i < numCaixas; i++){
+      if(!caixas[i]){
+        if(atual->dados.prioridade == true){
+          printf("Cliente %s (PRIORITARIO): CAIXA %d\n", atual->dados.nome, i + 1);
+        }
+        else{
+          printf("Cliente %s: CAIXA %d\n", atual->dados.nome, i + 1);
+        }
+        No *temp = lista->inicio;
+        lista->inicio = lista->inicio->proximo;
+        free(temp);
+        caixas[i] = true;
+        return;
+      }
+    }
+    printf("Todos os caixas estão ocupados, espere algum liberar o cliente.\n");
+  }
+}
+
+void liberaCaixa(bool caixas[], int numCaixas)
+{
+  caixas[numCaixas - 1] = false;
+  printf("Caixa %d liberado.\n", numCaixas);
+}
+
 int main()
 {
   tipoLista lista;
@@ -133,6 +172,20 @@ int main()
   cadastrarCliente(&lista, c5);
   cadastrarCliente(&lista, c6);
   cadastrarCliente(&lista, c7);
+
+  imprimirLista(&lista);
+
+  chamaCliente(&lista, caixas, 5);
+
+  imprimirLista(&lista);
+
+  chamaCliente(&lista, caixas, 5);
+
+  imprimirLista(&lista);
+
+  liberaCaixa(caixas, 1);
+
+  chamaCliente(&lista, caixas, 5);
 
   imprimirLista(&lista);
 }
