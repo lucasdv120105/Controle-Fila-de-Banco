@@ -114,7 +114,7 @@ void imprimirLista(tipoLista *lista)
 }
 
 bool caixas[5] = {false, false, false, false, false};
-int prioridadesAtendidas = 0, naoPrioritariosAtendidos = 0;
+int contadorCaixas[5] = {0, 0, 0, 0, 0};
 
 void chamaCliente(tipoLista *lista, bool caixas[], int numCaixas)
 {
@@ -139,6 +139,7 @@ void chamaCliente(tipoLista *lista, bool caixas[], int numCaixas)
         lista->inicio = lista->inicio->proximo;
         free(temp);
         caixas[i] = true;
+        contadorCaixas[i]++;
         return;
       }
     }
@@ -152,6 +153,12 @@ void liberaCaixa(bool caixas[], int numCaixas)
   printf("Caixa %d liberado.\n", numCaixas);
 }
 
+void clientesPorCaixa(){
+  printf("Caixa 1: %d clientes atendidos.\nCaixa 2: %d clientes atendidos.\n", contadorCaixas[0], contadorCaixas[1]);
+  printf("Caixa 3: %d clientes atendidos.\nCaixa 4: %d clientes atendidos.\n", contadorCaixas[2], contadorCaixas[3]);
+  printf("Caixa 5: %d clientes atendidos.\n", contadorCaixas[4]);
+}
+
 int main()
 {
   tipoLista lista;
@@ -159,7 +166,7 @@ int main()
 
   Cliente c1 = {"Carlos", 999555333, true};
   Cliente c2 = {"Jorge", 777222444, true};
-  Cliente c3 = {"Milton", 888111666, false};
+  Cliente c3 = {"Milton", 888111666, true};
   Cliente c4 = {"Amilcar", 111222333, true};
   Cliente c5 = {"Ricardo", 321321321, true};
   Cliente c6 = {"Luiz", 654987321, true};
@@ -188,4 +195,6 @@ int main()
   chamaCliente(&lista, caixas, 5);
 
   imprimirLista(&lista);
+
+  clientesPorCaixa();
 }
