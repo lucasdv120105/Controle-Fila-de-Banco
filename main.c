@@ -79,6 +79,27 @@ void cadastrarCliente(tipoLista *lista, Cliente cliente)
         lista->inicio = novoNo;
       atual->anterior = novoNo;
     }
+    lista->contadorPrioridades++;
+  }
+  else if (!novoNo->dados.prioridade && lista->contadorPrioridades > 2)
+  {
+    No *atual = lista->inicio;
+    int indice = 0;
+    while (indice < 2 && atual->proximo != NULL)
+    {
+      if (atual->dados.prioridade)
+      {
+        indice++;
+      }
+      else
+      {
+        indice = 0;
+      }
+      atual = atual->proximo;
+    }
+    novoNo->proximo = atual;
+    novoNo->anterior = atual->anterior;
+    atual->anterior->proximo = novoNo;
   }
   else
   {
