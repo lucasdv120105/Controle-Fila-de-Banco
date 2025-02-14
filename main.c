@@ -6,7 +6,7 @@
 typedef struct
 {
   char *nome;
-  char cpf[12];
+  int cpf;
   bool prioridade;
 } Cliente;
 
@@ -28,7 +28,6 @@ void inicializarLista(tipoLista *lista)
 {
   lista->inicio = NULL;
   lista->fim = NULL;
-  lista->contadorPrioridades = 0;
 }
 
 void cadastrarCliente(tipoLista *lista, Cliente cliente)
@@ -37,19 +36,13 @@ void cadastrarCliente(tipoLista *lista, Cliente cliente)
   if (!novoNo)
     return;
 
-  novoNo->dados.nome = strdup(cliente.nome);
+  novoNo->dados.nome = (char *)malloc(strlen(cliente.nome) + 1);
   strcpy(novoNo->dados.nome, cliente.nome);
-  strcpy(novoNo->dados.cpf, cliente.cpf);
+  novoNo->dados.cpf = cliente.cpf;
   novoNo->dados.prioridade = cliente.prioridade;
 
   novoNo->anterior = NULL;
   novoNo->proximo = NULL;
-
-  if (lista->contadorPrioridades == 2 && cliente.prioridade)
-  {
-    novoNo->dados.prioridade = false;
-    lista->contadorPrioridades = 0;
-  }
 
   if (lista->inicio == NULL)
   {
@@ -89,16 +82,12 @@ void cadastrarCliente(tipoLista *lista, Cliente cliente)
 
       atual->anterior = novoNo;
     }
-
-    lista->contadorPrioridades++;
   }
   else
   {
     novoNo->anterior = lista->fim;
     lista->fim->proximo = novoNo;
     lista->fim = novoNo;
-
-    lista->contadorPrioridades = 0;
   }
 }
 
@@ -107,7 +96,7 @@ void imprimirLista(tipoLista *lista)
   No *atual = lista->inicio;
   while (atual != NULL)
   {
-    printf("Nome: %s, CPF: %s, Prioridade?: %s\n",
+    printf("Nome: %s, CPF: %d, Prioridade?: %s\n",
            atual->dados.nome, atual->dados.cpf, atual->dados.prioridade ? "SIM" : "NAO");
     atual = atual->proximo;
   }
@@ -120,30 +109,36 @@ int proximoCaixa = 0;
 
 void chamaCliente(tipoLista *lista, bool caixas[], int numCaixas)
 {
-    if (lista->inicio == NULL) {
-        printf("Fila vazia.\n");
-        return;
-    }
+  if (lista->inicio == NULL)
+  {
+    printf("Fila vazia.\n");
+    return;
+  }
 
-    caixas[proximoCaixa] = false;
+  caixas[proximoCaixa] = false;
 
-    if (lista->inicio->dados.prioridade == true) {
-        printf("Cliente %s (PRIORITARIO): CAIXA %d\n", lista->inicio->dados.nome, proximoCaixa + 1);
-    } else {
-        printf("Cliente %s: CAIXA %d\n", lista->inicio->dados.nome, proximoCaixa + 1);
-    }
+  if (lista->inicio->dados.prioridade == true)
+  {
+    printf("Cliente %s (PRIORITARIO): CAIXA %d\n", lista->inicio->dados.nome, proximoCaixa + 1);
+    lista->contadorPrioridades++;
+  }
+  else
+  {
+    printf("Cliente %s: CAIXA %d\n", lista->inicio->dados.nome, proximoCaixa + 1);
+  }
 
-    No *temp = lista->inicio;
-    lista->inicio = lista->inicio->proximo;
-    free(temp);
+  No *temp = lista->inicio;
+  lista->inicio = lista->inicio->proximo;
+  free(temp);
 
-    caixas[proximoCaixa] = true;
-    contadorCaixas[proximoCaixa]++;
+  caixas[proximoCaixa] = true;
+  contadorCaixas[proximoCaixa]++;
 
-    proximoCaixa = (proximoCaixa + 1) % numCaixas;
+  proximoCaixa = (proximoCaixa + 1) % numCaixas;
 }
 
-void clientesPorCaixa(){
+void clientesPorCaixa()
+{
   printf("Caixa 1: %d clientes atendidos.\nCaixa 2: %d clientes atendidos.\n", contadorCaixas[0], contadorCaixas[1]);
   printf("Caixa 3: %d clientes atendidos.\nCaixa 4: %d clientes atendidos.\n", contadorCaixas[2], contadorCaixas[3]);
   printf("Caixa 5: %d clientes atendidos.\n", contadorCaixas[4]);
@@ -155,7 +150,8 @@ int main()
   inicializarLista(&lista);
   Cliente novoCliente;
   int resp;
-  do{
+  do
+  {
     printf("\n== Fila de banco ==\n");
     printf("1- Cadastrar cliente\n");
     printf("2- Previsao de atendimento do cliente(listagem da organizacao da fila)\n");
@@ -164,36 +160,35 @@ int main()
     printf("5- Encerrar expediente\n");
     printf("Digite a opcao desejada: ");
     scanf("%d", &resp);
-    switch(resp){
-      case 1:
-        novoCliente.nome = (char *)malloc(100 * sizeof(char));
-        printf("Digite o nome do cliente: ");
-        scanf(" %[^\n]s", novoCliente.nome);
-        printf("Digite o cpf do cliente: ");
-        scanf("%s", &novoCliente.cpf);
-        printf("O cliente tem prioridade? (1- Sim ou 0- Nao): ");
-        scanf("%d", &novoCliente.prioridade);
-        cadastrarCliente(&lista, novoCliente);
-        printf("Cliente cadastrado com sucesso!\n");
-        break;
-    
-      case 2:
-        imprimirLista(&lista);
-        break;
+    switch (resp)
+    {
+    case 1:
+      novoCliente.nome = (char *)malloc(100 * sizeof(char));
+      printf("Digite o nome do cliente: ");
+      scanf(" %[^\n]s", novoCliente.nome);
+      printf("Digite o cpf do cliente: ");
+      scanf("%s", &novoCliente.cpf);
+      printf("O cliente tem prioridade? (1- Sim ou 0- Nao): ");
+      scanf("%d", &novoCliente.prioridade);
+      cadastrarCliente(&lista, novoCliente);
+      printf("Cliente cadastrado com sucesso!\n");
+      break;
 
-      case 3:
-        chamaCliente(&lista, caixas, 5);
-        break;
+    case 2:
+      imprimirLista(&lista);
+      break;
 
-      case 4: 
-        clientesPorCaixa();
-        break;
+    case 3:
+      chamaCliente(&lista, caixas, 5);
+      break;
 
-      case 5: 
-        clientesPorCaixa();
-        break;
+    case 4:
+      clientesPorCaixa();
+      break;
 
+    case 5:
+      clientesPorCaixa();
+      break;
     }
-  } while(resp != 5);
-
+  } while (resp != 5);
 }
