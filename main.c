@@ -125,14 +125,12 @@ void chamaCliente(tipoLista *lista, bool caixas[], int numCaixas)
         return;
     }
 
-    No *atual = lista->inicio;
-
     caixas[proximoCaixa] = false;
 
-    if (atual->dados.prioridade == true) {
-        printf("Cliente %s (PRIORITARIO): CAIXA %d\n", atual->dados.nome, proximoCaixa + 1);
+    if (lista->inicio->dados.prioridade == true) {
+        printf("Cliente %s (PRIORITARIO): CAIXA %d\n", lista->inicio->dados.nome, proximoCaixa + 1);
     } else {
-        printf("Cliente %s: CAIXA %d\n", atual->dados.nome, proximoCaixa + 1);
+        printf("Cliente %s: CAIXA %d\n", lista->inicio->dados.nome, proximoCaixa + 1);
     }
 
     No *temp = lista->inicio;
