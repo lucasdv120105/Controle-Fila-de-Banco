@@ -28,6 +28,18 @@ void inicializarLista(tipoLista *lista)
 {
   lista->inicio = NULL;
   lista->fim = NULL;
+  lista->contadorPrioridades = 0;
+}
+
+void imprimirLista(tipoLista *lista)
+{
+  No *atual = lista->inicio;
+  while (atual)
+  {
+    printf("Nome: %s, CPF: %s, Prioridade?: %s\n",
+           atual->dados.nome, atual->dados.cpf, atual->dados.prioridade ? "SIM" : "NAO");
+    atual = atual->proximo;
+  }
 }
 
 void cadastrarCliente(tipoLista *lista, Cliente cliente)
@@ -106,17 +118,6 @@ void cadastrarCliente(tipoLista *lista, Cliente cliente)
     novoNo->anterior = lista->fim;
     lista->fim->proximo = novoNo;
     lista->fim = novoNo;
-  }
-}
-
-void imprimirLista(tipoLista *lista)
-{
-  No *atual = lista->inicio;
-  while (atual)
-  {
-    printf("Nome: %s, CPF: %s, Prioridade?: %s\n",
-           atual->dados.nome, atual->dados.cpf, atual->dados.prioridade ? "SIM" : "NAO");
-    atual = atual->proximo;
   }
 }
 
@@ -219,8 +220,11 @@ int main()
       break;
 
     case 4:
-    case 5:
       clientesPorCaixa();
+      break;
+    
+    default:
+      printf("Opcao inexistente. Selecione outro numero");
       break;
     }
   } while (resp != 5);
